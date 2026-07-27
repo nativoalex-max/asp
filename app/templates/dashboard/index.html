@@ -1,11 +1,104 @@
+(venv) datafile@datafile-HP-ProDesk-400-G6-Desktop-Mini-PC:/opt/asp$ cat app/templates/dashboard/index.html
 {% extends "layout/base.html" %}
 
 {% block content %}
 
-<h1>Dashboard</h1>
+<div class="container-fluid">
 
-<h2>{{ app_name }}</h2>
+    <div class="mb-4">
+        <h1 class="display-6">{{ app_name }}</h1>
+        <p class="text-muted">{{ description }}</p>
+        <small class="text-secondary">Versión {{ version }}</small>
+    </div>
 
-<p>{{ description }}</p>
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>🖥 Hostname</h6>
+                    <h4>{{ system_info.hostname }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>💻 Sistema Operativo</h6>
+                    <h4>{{ system_info.os }}</h4>
+                    <small>{{ system_info.release }}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>⚙ CPU</h6>
+
+<h3 id="cpu">{{ system_info.cpu }} %</h3>
+
+<div class="progress mt-3" style="height:10px;">
+    <div
+        id="cpu-bar"
+        class="progress-bar"
+        role="progressbar"
+        style="width: {{ system_info.cpu }}%;"
+        aria-valuenow="{{ system_info.cpu }}"
+        aria-valuemin="0"
+        aria-valuemax="100">
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>🧠 Memoria RAM</h6>
+                    <h3 id="memory">{{ system_info.memory }} %</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>💾 Disco</h6>
+                    <h3 id="disk">{{ system_info.disk }} %</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>🐍 Python</h6>
+                    <h4>{{ system_info.python }}</h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+async function actualizarSistema() {
+
+    const respuesta = await fetch("/api/system");
+    const datos = await respuesta.json();
+
+    document.getElementById("cpu").innerText = datos.cpu + " %";
+    document.getElementById("memory").innerText = datos.memory + " %";
+    document.getElementById("disk").innerText = datos.disk + " %";
+}
+
+// Actualiza cada 5 segundos
+setInterval(actualizarSistema, 5000);
+</script>
 
 {% endblock %}
+(venv) datafile@datafile-HP-ProDesk-400-G6-Desktop-Mini-PC:/opt/asp$

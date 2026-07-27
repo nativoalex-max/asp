@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from app.core.config import settings
+from app.services.system_service import get_system_info
 
 templates = Jinja2Templates(directory="app/templates")
 
@@ -12,6 +13,8 @@ router = APIRouter()
 @router.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request):
 
+    system_info = get_system_info()
+
     return templates.TemplateResponse(
         request=request,
         name="dashboard/index.html",
@@ -20,5 +23,6 @@ async def dashboard(request: Request):
             "app_name": settings.APP_NAME,
             "description": settings.APP_DESCRIPTION,
             "version": f"{settings.APP_VERSION} {settings.APP_CODENAME}",
+            "system_info": system_info,
         },
     )
