@@ -1,4 +1,5 @@
 import uuid
+from typing import Any, Dict, List
 
 from pydantic import BaseModel, ConfigDict
 
@@ -52,3 +53,23 @@ class AssetResponse(AssetBase):
     model_config = ConfigDict(
         from_attributes=True,
     )
+
+
+class AssetDrawerResponse(BaseModel):
+    """Schema de respuesta para el Drawer de un Asset.
+
+    Campos:
+    - asset: AssetResponse (información del activo)
+    - stats: diccionario con métricas (total_scans, open_ports, vulnerabilities, severidades)
+    - last_scan: dict con información del último scan (puede ser None)
+    - ports: lista de dicts con información de puertos
+    - vulnerabilities: lista de dicts con información de vulnerabilidades
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    asset: AssetResponse
+    stats: Dict[str, Any]
+    last_scan: Dict[str, Any] | None = None
+    ports: List[Dict[str, Any]] = []
+    vulnerabilities: List[Dict[str, Any]] = []

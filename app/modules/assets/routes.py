@@ -13,6 +13,7 @@ from app.modules.clients.service import get_client_by_id
 from app.modules.assets.schema import (
     AssetCreate,
     AssetResponse,
+    AssetDrawerResponse,
     AssetUpdate,
 )
 
@@ -21,6 +22,7 @@ from app.modules.assets.service import (
     delete_asset,
     get_asset_by_id,
     get_asset_by_ip,
+    get_asset_drawer,
     get_assets,
     update_asset,
 )
@@ -93,6 +95,26 @@ def get_asset_view(
     return JSONResponse(
         content=AssetResponse.model_validate(asset).model_dump(mode="json")
     )
+
+
+@router.get(
+    "/drawer/{asset_id}",
+    response_model=AssetDrawerResponse,
+)
+def get_asset_drawer_view(
+    asset_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    drawer_data = get_asset_drawer(db, asset_id)
+
+    if not drawer_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activo no encontrado",
+        )
+
+    return drawer_data
 
 
 # ==========================================================
