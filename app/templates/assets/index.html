@@ -1,0 +1,296 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/assets.css">
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">
+                <i class="bi bi-pc-display"></i>
+                Assets
+            </h2>
+
+            <small class="text-muted">
+                Inventario de Activos
+            </small>
+
+        </div>
+
+        <div>
+
+            <a href="/assets/new" class="btn btn-primary">
+
+                <i class="bi bi-plus-circle"></i>
+
+                Nuevo Activo
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+
+                <div class="col-md-4">
+
+                    <input
+                        id="searchInput"
+                        class="form-control"
+                        placeholder="Buscar hostname o IP">
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Hostname</th>
+                            <th>IP</th>
+                            <th>Sistema Operativo</th>
+                            <th>Tipo</th>
+                            <th>Criticidad</th>
+                            <th>Estado</th>
+                            <th width="220">Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="assetTable">
+
+                    {% for asset in assets %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ asset.hostname or asset.name }}</strong>
+                        </td>
+
+                        <td>{{ asset.ip_address }}</td>
+
+                        <td>{{ asset.operating_system or "-" }}</td>
+
+                        <td>{{ asset.asset_type }}</td>
+
+                        <td>
+
+                            {% if asset.criticality == "Alta" %}
+                                <span class="badge bg-danger">Alta</span>
+                            {% elif asset.criticality == "Media" %}
+                                <span class="badge bg-warning text-dark">Media</span>
+                            {% else %}
+                                <span class="badge bg-success">Baja</span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if asset.is_active %}
+                                <span class="badge bg-success">Online</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Offline</span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+<button
+    class="btn btn-outline-primary btn-sm"
+    onclick="openDrawer('{{ asset.id }}')" disabled='disabled' data-old='
+        id:"{{ asset.id }}",
+        name:"{{ asset.name or "" }}",
+        hostname:"{{ asset.hostname or "" }}",
+        ip:"{{ asset.ip_address or "" }}",
+        dns:"{{ asset.dns_name or "" }}",
+        mac:"{{ asset.mac_address or "" }}",
+        os:"{{ asset.operating_system or "" }}",
+        type:"{{ asset.asset_type or "" }}",
+        criticality:"{{ asset.criticality or "" }}",
+        owner:"{{ asset.owner or "" }}",
+        location:"{{ asset.location or "" }}"
+    })'>
+    <i class="bi bi-eye"></i>
+</button>
+
+                            <button
+                                class="btn btn-outline-warning btn-sm"
+                                onclick="editAsset()">
+
+                                <i class="bi bi-pencil"></i>
+
+                            </button>
+
+                            <button
+                                class="btn btn-outline-success btn-sm"
+                                onclick="startScan()">
+
+                                <i class="bi bi-play-fill"></i>
+
+                            </button>
+
+                            <button
+                                class="btn btn-outline-danger btn-sm"
+                                onclick="deleteAsset()">
+
+                                <i class="bi bi-trash"></i>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= DRAWER ================= -->
+
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+<div id="assetDrawer" class="asset-drawer">
+
+    <div class="drawer-header">
+
+        <div>
+
+            <h4 class="drawer-title" id="drawerName">
+                Asset
+            </h4>
+
+            <small id="drawerSubtitle">Cargando...</small>
+
+        </div>
+
+        <button class="drawer-close" onclick="closeDrawer()">
+
+            <i class="bi bi-x-lg"></i>
+
+        </button>
+
+    </div>
+
+    <div class="drawer-body">
+
+        <div class="asset-section">
+
+            <div class="asset-section-title">
+                Información General
+            </div>
+
+            <div class="asset-info">
+
+                <label>Hostname</label>
+                <span id="drawerHostname">-</span>
+
+                <label>IP</label>
+                <span id="drawerIPValue">-</span>
+
+                <label>DNS</label>
+                <span id="drawerDNS">-</span>
+
+                <label>MAC</label>
+                <span id="drawerMAC">-</span>
+
+                <label>Sistema</label>
+                <span id="drawerOS">-</span>
+
+                <label>Tipo</label>
+                <span id="drawerType">-</span>
+
+                <label>Criticidad</label>
+                <span id="drawerCriticality">-</span>
+
+                <label>Responsable</label>
+                <span id="drawerOwner">-</span>
+
+                <label>Ubicación</label>
+                <span id="drawerLocation">-</span>
+
+            </div>
+
+        </div>
+
+    
+        <hr>
+        <div class="asset-section">
+            <div class="asset-section-title">Scans</div>
+            <div id="drawerScans">Sin información disponible.</div>
+        </div>
+        <div class="asset-section">
+            <div class="asset-section-title">Puertos</div>
+            <div id="drawerPorts">Sin información disponible.</div>
+        </div>
+        <div class="asset-section">
+            <div class="asset-section-title">Vulnerabilidades</div>
+            <div id="drawerVulns">Sin información disponible.</div>
+        </div>
+    </div>
+
+    <div class="drawer-footer">
+
+        <button
+            class="btn btn-success"
+            onclick="startScan()">
+
+            <i class="bi bi-play-fill"></i>
+
+            Ejecutar Escaneo
+
+        </button>
+
+        <button
+            class="btn btn-warning"
+            onclick="editAsset()">
+
+            <i class="bi bi-pencil"></i>
+
+            Editar
+
+        </button>
+
+        <button
+            class="btn btn-danger"
+            onclick="deleteAsset()">
+
+            <i class="bi bi-trash"></i>
+
+            Eliminar
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="/static/js/assets.js"></script>
+
+{% endblock %}

@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_active_user
@@ -30,6 +31,10 @@ router = APIRouter(
 )
 
 
+# ==========================================================
+# LIST
+# ==========================================================
+
 @router.get(
     "/",
     response_model=list[AssetResponse],
@@ -40,6 +45,10 @@ def list_assets(
 ):
     return get_assets(db)
 
+
+# ==========================================================
+# DETAIL (API)
+# ==========================================================
 
 @router.get(
     "/{asset_id}",
@@ -60,6 +69,35 @@ def get_asset(
 
     return asset
 
+
+# ==========================================================
+# DETAIL (WEB)
+# ==========================================================
+
+@router.get(
+    "/view/{asset_id}",
+)
+def get_asset_view(
+    asset_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    asset = get_asset_by_id(db, asset_id)
+
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activo no encontrado",
+        )
+
+    return JSONResponse(
+        content=AssetResponse.model_validate(asset).model_dump(mode="json")
+    )
+
+
+# ==========================================================
+# CREATE
+# ==========================================================
 
 @router.post(
     "/",
@@ -85,6 +123,10 @@ def new_asset(
 
     return create_asset(db, asset)
 
+
+# ==========================================================
+# UPDATE
+# ==========================================================
 
 @router.put(
     "/{asset_id}",
@@ -119,6 +161,10 @@ def edit_asset(
         asset,
     )
 
+
+# ==========================================================
+# DELETE
+# ==========================================================
 
 @router.delete(
     "/{asset_id}",

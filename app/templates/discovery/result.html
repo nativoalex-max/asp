@@ -1,0 +1,17 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+
+<h2>Resultado del Discovery</h2>
+
+<p><strong>Hosts encontrados:</strong> {{ result.hosts }}</p>
+
+<p><strong>Assets creados:</strong> {{ result.created_assets }}</p>
+
+<p><strong>Assets existentes:</strong> {{ result.existing_assets }}</p>
+
+<a href="/discovery">
+    Volver
+</a>
+
+{% endblock %}

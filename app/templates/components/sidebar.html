@@ -1,73 +1,126 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark"
-     style="width: 280px; height:100vh; position:fixed;">
+<div class="d-flex flex-column bg-dark text-white shadow-lg"
+     style="width:280px;
+            height:100vh;
+            position:fixed;
+            top:0;
+            left:0;
+            z-index:1030;">
 
-    <a href="/"
-       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <div class="p-4 border-bottom border-secondary">
 
-        <i class="bi bi-shield-lock-fill fs-2 me-2"></i>
+        <div class="d-flex align-items-center">
 
-        <span class="fs-4">ASP</span>
+            <i class="bi bi-shield-fill-check fs-2 text-info me-3"></i>
 
-    </a>
+            <div>
 
-    <hr>
+                <h5 class="mb-0 fw-bold">
+                    ASP
+                </h5>
 
-    <ul class="nav nav-pills flex-column mb-auto">
+                <small class="text-secondary">
+                    AOR Security Platform
+                </small>
 
-        <li class="nav-item">
-            <a href="/" class="nav-link active">
-                <i class="bi bi-speedometer2 me-2"></i>
-                Dashboard
-            </a>
-        </li>
+            </div>
 
-        <li>
-            <a href="#" class="nav-link text-white">
-                <i class="bi bi-folder2-open me-2"></i>
-                Proyectos
-            </a>
-        </li>
+        </div>
 
-        <li>
-            <a href="#" class="nav-link text-white">
-                <i class="bi bi-search me-2"></i>
-                Escaneos
-            </a>
-        </li>
+    </div>
 
-        <li>
-            <a href="#" class="nav-link text-white">
-                <i class="bi bi-robot me-2"></i>
-                Inteligencia Artificial
-            </a>
-        </li>
+    <div class="flex-grow-1 p-3">
 
-        <li>
-            <a href="#" class="nav-link text-white">
-                <i class="bi bi-file-earmark-text me-2"></i>
-                Reportes
-            </a>
-        </li>
+        <small class="text-uppercase text-secondary fw-bold">
+            Principal
+        </small>
 
-        <li>
-            <a href="#" class="nav-link text-white">
-                <i class="bi bi-gear me-2"></i>
-                Configuración
-            </a>
-        </li>
+        <ul class="nav nav-pills flex-column mt-3">
 
-    </ul>
+            <li class="nav-item mb-2">
+                <a href="/" class="nav-link text-white">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Dashboard
+                </a>
+            </li>
 
-    <hr>
+            <li class="nav-item mb-2">
+                <a href="/discovery" class="nav-link text-white">
+                    <i class="bi bi-router me-2"></i>
+                    Discovery
+                </a>
+            </li>
 
-    <small class="text-secondary">
+            <li class="nav-item mb-2">
+                <a href="/assets" class="nav-link text-white">
+                    <i class="bi bi-pc-display me-2"></i>
+                    Assets
+                </a>
+            </li>
 
-        AOR Security Platform
+            <li class="nav-item mb-2">
+                <a href="/scans" class="nav-link text-white">
+                    <i class="bi bi-search me-2"></i>
+                    Scans
+                </a>
+            </li>
 
-        <br>
+            <li class="nav-item mb-2">
+                <a href="/vulnerabilities" class="nav-link text-white">
+                    <i class="bi bi-bug me-2"></i>
+                    Vulnerabilities
+                </a>
+            </li>
 
-        v{{ version }}
+        </ul>
 
-    </small>
+        <hr class="border-secondary">
+
+        <small class="text-uppercase text-secondary fw-bold">
+            Gestión
+        </small>
+
+        <ul class="nav nav-pills flex-column mt-3">
+
+            <li class="nav-item mb-2">
+                <a href="/reports" class="nav-link text-white">
+                    <i class="bi bi-file-earmark-bar-graph me-2"></i>
+                    Reports
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a href="#" class="nav-link text-white">
+                    <i class="bi bi-cpu me-2"></i>
+                    AI Assistant
+                    <span class="badge bg-warning text-dark ms-2">
+                        Soon
+                    </span>
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a href="/settings" class="nav-link text-white">
+                    <i class="bi bi-gear me-2"></i>
+                    Settings
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="p-3 border-top border-secondary">
+
+        <small class="text-secondary">
+
+            Version {{ version }}
+
+            <br>
+
+            © 2026 AOR Security Platform
+
+        </small>
+
+    </div>
 
 </div>

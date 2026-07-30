@@ -1,0 +1,41 @@
+.kpi-card{
+
+    transition:.25s;
+
+    border-radius:15px;
+
+}
+
+.kpi-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.kpi-value{
+
+    font-size:34px;
+
+    font-weight:bold;
+
+}
+
+.status-card{
+
+    border-left:6px solid #0d6efd;
+
+}
+
+.progress{
+
+    height:24px;
+
+    border-radius:20px;
+
+}
+
+.table td{
+
+    vertical-align:middle;
+
+}

@@ -4,36 +4,64 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{ app_name }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<link rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/css/style.css">
+
+    <style>
+
+        body{
+            background:#f4f6f9;
+            overflow-x:hidden;
+        }
+
+        .content-wrapper{
+
+            margin-left:280px;
+            margin-top:70px;
+            padding:30px;
+            min-height:100vh;
+
+        }
+
+        .page-card{
+
+            background:white;
+            border-radius:18px;
+            padding:25px;
+            box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-    {% include "components/navbar.html" %}
+{% include "components/navbar.html" %}
 
-    {% include "components/sidebar.html" %}
+{% include "components/sidebar.html" %}
 
-    <div class="content">
+<div class="content-wrapper">
 
-        {% block content %}
+<div class="page-card">
 
-        {% endblock %}
+{% block content %}
 
-    </div>
+{% endblock %}
 
-    {% include "components/footer.html" %}
+</div>
 
-    <script src="/static/js/app.js"></script>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
 
 </body>
 

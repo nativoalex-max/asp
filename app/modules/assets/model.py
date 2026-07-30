@@ -1,10 +1,14 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.modules.scans.model import Scan
 
 
 class Asset(Base):
@@ -101,4 +105,10 @@ class Asset(Base):
         Boolean,
         default=True,
         nullable=False,
+    )
+
+    scans: Mapped[list["Scan"]] = relationship(
+        "Scan",
+        back_populates="asset",
+        cascade="all, delete-orphan",
     )

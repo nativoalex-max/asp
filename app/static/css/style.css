@@ -1,61 +1,73 @@
-body{
+*{
     margin:0;
-    background:#0f172a;
-    color:white;
-    font-family:Arial, Helvetica, sans-serif;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* Contenido principal */
-
-.content{
-    margin-left:280px;
-    padding:30px;
-    margin-top:70px;
+body{
+    background:#f4f6f9;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-/* Sidebar */
+/* NAVBAR */
+
+.navbar{
+    position:fixed;
+    top:0;
+    left:250px;
+    right:0;
+    height:60px;
+    z-index:1000;
+}
+
+/* SIDEBAR */
 
 .sidebar{
     position:fixed;
     top:0;
     left:0;
-    width:280px;
+    width:250px;
     height:100vh;
     background:#212529;
+    overflow:auto;
+    z-index:1100;
 }
 
-/* Navbar */
+/* CONTENIDO */
 
-.navbar{
-    position:fixed;
-    top:0;
-    left:280px;
-    right:0;
-    z-index:1000;
+.main-content{
+
+    margin-left:250px;
+    margin-top:60px;
+    padding:25px;
+
 }
 
-/* Títulos */
-
-h1{
-    color:#38bdf8;
-    font-size:48px;
-}
-
-h2{
-    color:#94a3b8;
-}
-
-/* Cards (las usaremos en el siguiente paso) */
+/* TARJETAS */
 
 .card{
+
     border:none;
     border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,.08);
+
 }
 
-/* Footer */
+.card-header{
 
-footer{
-    margin-left:280px;
-    padding:20px;
-    color:#9ca3af;
+    background:#fff;
+    font-weight:bold;
+
+}
+
+.table{
+
+    margin-bottom:0;
+
+}
+
+.btn{
+
+    border-radius:8px;
+
 }

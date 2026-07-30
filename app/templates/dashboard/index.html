@@ -1,104 +1,325 @@
-(venv) datafile@datafile-HP-ProDesk-400-G6-Desktop-Mini-PC:/opt/asp$ cat app/templates/dashboard/index.html
 {% extends "layout/base.html" %}
 
 {% block content %}
 
+<link rel="stylesheet" href="/static/css/dashboard.css">
+
 <div class="container-fluid">
 
-    <div class="mb-4">
-        <h1 class="display-6">{{ app_name }}</h1>
-        <p class="text-muted">{{ description }}</p>
-        <small class="text-secondary">Versión {{ version }}</small>
-    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <div class="row g-4">
+        <div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>🖥 Hostname</h6>
-                    <h4>{{ system_info.hostname }}</h4>
-                </div>
-            </div>
+            <h2 class="fw-bold mb-0">
+                <i class="bi bi-speedometer2 text-primary"></i>
+                Security Dashboard
+            </h2>
+
+            <small class="text-muted">
+                Security Operations Center
+            </small>
+
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+        <button class="btn btn-primary" onclick="loadDashboard()">
+            <i class="bi bi-arrow-clockwise"></i>
+            Actualizar
+        </button>
+
+    </div>
+
+    <!-- KPI -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card kpi-card shadow">
+
                 <div class="card-body">
-                    <h6>💻 Sistema Operativo</h6>
-                    <h4>{{ system_info.os }}</h4>
-                    <small>{{ system_info.release }}</small>
+
+                    <small class="text-muted">Assets</small>
+
+                    <div class="kpi-value text-primary" id="assets">
+                        0
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card kpi-card shadow">
+
                 <div class="card-body">
-                    <h6>⚙ CPU</h6>
 
-<h3 id="cpu">{{ system_info.cpu }} %</h3>
+                    <small class="text-muted">
+                        Scans
+                    </small>
 
-<div class="progress mt-3" style="height:10px;">
-    <div
-        id="cpu-bar"
-        class="progress-bar"
-        role="progressbar"
-        style="width: {{ system_info.cpu }}%;"
-        aria-valuenow="{{ system_info.cpu }}"
-        aria-valuemin="0"
-        aria-valuemax="100">
+                    <div class="kpi-value text-success" id="scans">
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card kpi-card shadow">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Vulnerabilities
+                    </small>
+
+                    <div class="kpi-value text-danger" id="vulns">
+                        0
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card kpi-card shadow">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Risk Score
+                    </small>
+
+                    <div class="kpi-value text-warning" id="risk">
+                        0%
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
+    <!-- Estado -->
+
+    <div class="row mb-4">
+
+        <div class="col-lg-6">
+
+            <div class="card status-card">
+
+                <div class="card-header">
+
+                    Estado General
+
+                </div>
+
+                <div class="card-body">
+
+                    <h3 id="platformStatus">
+                        -
+                    </h3>
+
+                    <p class="mb-1">
+
+                        Último Escaneo
+
+                    </p>
+
+                    <strong id="lastScan">
+                        -
+                    </strong>
+
+                    <hr>
+
+                    <div class="progress">
+
+                        <div
+                            id="riskBar"
+                            class="progress-bar"
+                            style="width:0%">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    Distribución por Severidad
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table">
+
+                        <tbody>
+
+                        <tr>
+
+                            <td>
+                                🔴 Critical
+                            </td>
+
+                            <td id="critical">
+                                0
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                🟠 High
+                            </td>
+
+                            <td id="high">
+                                0
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                🟡 Medium
+                            </td>
+
+                            <td id="medium">
+                                0
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                🟢 Low
+                            </td>
+
+                            <td id="low">
+                                0
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Tablas -->
+
+    <div class="row">
+
+        <div class="col-lg-6">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    Top Puertos
+
+                </div>
+
+                <div class="card-body p-0">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Puerto</th>
+
+                                <th>Total</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="ports">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    Top Productos
+
+                </div>
+
+                <div class="card-body p-0">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Producto</th>
+
+                                <th>Total</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="products">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>🧠 Memoria RAM</h6>
-                    <h3 id="memory">{{ system_info.memory }} %</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>💾 Disco</h6>
-                    <h3 id="disk">{{ system_info.disk }} %</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>🐍 Python</h6>
-                    <h4>{{ system_info.python }}</h4>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<script>
-async function actualizarSistema() {
-
-    const respuesta = await fetch("/api/system");
-    const datos = await respuesta.json();
-
-    document.getElementById("cpu").innerText = datos.cpu + " %";
-    document.getElementById("memory").innerText = datos.memory + " %";
-    document.getElementById("disk").innerText = datos.disk + " %";
-}
-
-// Actualiza cada 5 segundos
-setInterval(actualizarSistema, 5000);
-</script>
+<script src="/static/js/dashboard.js"></script>
 
 {% endblock %}
-(venv) datafile@datafile-HP-ProDesk-400-G6-Desktop-Mini-PC:/opt/asp$
