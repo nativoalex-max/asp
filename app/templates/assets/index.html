@@ -114,19 +114,7 @@
 
 <button
     class="btn btn-outline-primary btn-sm"
-    onclick="openDrawer('{{ asset.id }}')" disabled='disabled' data-old='
-        id:"{{ asset.id }}",
-        name:"{{ asset.name or "" }}",
-        hostname:"{{ asset.hostname or "" }}",
-        ip:"{{ asset.ip_address or "" }}",
-        dns:"{{ asset.dns_name or "" }}",
-        mac:"{{ asset.mac_address or "" }}",
-        os:"{{ asset.operating_system or "" }}",
-        type:"{{ asset.asset_type or "" }}",
-        criticality:"{{ asset.criticality or "" }}",
-        owner:"{{ asset.owner or "" }}",
-        location:"{{ asset.location or "" }}"
-    })'>
+    onclick="openDrawer('{{ asset.id }}')">
     <i class="bi bi-eye"></i>
 </button>
 
@@ -176,9 +164,9 @@
 
 <div id="drawerBackdrop" class="drawer-backdrop"></div>
 
-<div id="assetDrawer" class="asset-drawer">
+<div id="assetDrawer" class="asset-drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
 
-    <div class="drawer-header">
+    <div class="drawer-header" id="drawerHeader">
 
         <div>
 
@@ -190,7 +178,7 @@
 
         </div>
 
-        <button class="drawer-close" onclick="closeDrawer()">
+        <button class="drawer-close" type="button" onclick="closeDrawer()" id="drawerCloseButton" aria-label="Cerrar panel">
 
             <i class="bi bi-x-lg"></i>
 
@@ -200,7 +188,7 @@
 
     <div class="drawer-body">
 
-        <div class="asset-section">
+        <div class="asset-section" id="drawerGeneralInfo">
 
             <div class="asset-section-title">
                 Información General
@@ -239,20 +227,82 @@
 
         </div>
 
-    
-        <hr>
-        <div class="asset-section">
-            <div class="asset-section-title">Scans</div>
-            <div id="drawerScans">Sin información disponible.</div>
+        <div class="asset-section" id="drawerStatsSection">
+
+            <div class="asset-section-title">
+                Resumen
+            </div>
+
+            <div class="row g-2" id="drawerStats">
+
+                <div class="col-6 col-md-3">
+                    <div class="card p-3">
+                        <div class="text-muted small">Scans</div>
+                        <div id="drawerStatsTotalScans" class="h5">-</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="card p-3">
+                        <div class="text-muted small">Puertos abiertos</div>
+                        <div id="drawerStatsOpenPorts" class="h5">-</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="card p-3">
+                        <div class="text-muted small">Vulnerabilidades</div>
+                        <div id="drawerStatsVulnerabilities" class="h5">-</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="card p-3">
+                        <div class="text-muted small">Críticas</div>
+                        <div id="drawerStatsCritical" class="h5">-</div>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
-        <div class="asset-section">
-            <div class="asset-section-title">Puertos</div>
-            <div id="drawerPorts">Sin información disponible.</div>
+
+        <div class="asset-section" id="drawerLastScanSection">
+            <div class="asset-section-title">Último Scan</div>
+            <div id="drawerLastScan">Sin información disponible.</div>
         </div>
-        <div class="asset-section">
-            <div class="asset-section-title">Vulnerabilidades</div>
-            <div id="drawerVulns">Sin información disponible.</div>
+
+        <div class="asset-section" id="drawerContentTabs">
+            <ul class="nav nav-pills mb-3" id="drawerTabList" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="drawer-tab-overview" data-bs-toggle="pill" data-bs-target="#drawerTabOverview" type="button" role="tab" aria-controls="drawerTabOverview" aria-selected="true">
+                        Overview
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="drawer-tab-ports" data-bs-toggle="pill" data-bs-target="#drawerTabPorts" type="button" role="tab" aria-controls="drawerTabPorts" aria-selected="false">
+                        Puertos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="drawer-tab-vulns" data-bs-toggle="pill" data-bs-target="#drawerTabVulnerabilities" type="button" role="tab" aria-controls="drawerTabVulnerabilities" aria-selected="false">
+                        Vulnerabilidades
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="drawerTabContent">
+                <div class="tab-pane fade show active" id="drawerTabOverview" role="tabpanel" aria-labelledby="drawer-tab-overview">
+                    <div id="drawerOverview">Cargando información...</div>
+                </div>
+                <div class="tab-pane fade" id="drawerTabPorts" role="tabpanel" aria-labelledby="drawer-tab-ports">
+                    <div id="drawerPorts">Sin información disponible.</div>
+                </div>
+                <div class="tab-pane fade" id="drawerTabVulnerabilities" role="tabpanel" aria-labelledby="drawer-tab-vulns">
+                    <div id="drawerVulns">Sin información disponible.</div>
+                </div>
+            </div>
         </div>
+
     </div>
 
     <div class="drawer-footer">
