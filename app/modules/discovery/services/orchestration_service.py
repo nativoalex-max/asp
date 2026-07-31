@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.modules.discovery.repositories.discovery_repository import update_total_hosts
 from app.modules.discovery.services.asset_service import get_or_create_asset
 from app.modules.discovery.services.discovery_scan_service import execute_discovery_scan
 from app.modules.discovery.validators.discovery_validator import (
@@ -41,9 +42,7 @@ def run_discovery_service(
         print(f"DISCOVERY: Hosts encontrados: {len(hosts)}")
         print("=" * 60)
 
-        job.total_hosts = len(hosts)
-        db.commit()
-        db.refresh(job)
+        update_total_hosts(db, job, hosts)
 
         created = 0
         existing = 0
