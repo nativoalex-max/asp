@@ -1,5 +1,6 @@
 """Servicio de orquestacion para la ejecucion de scans."""
 
+import logging
 from uuid import UUID
 from typing import Any
 
@@ -21,6 +22,9 @@ from app.modules.scans.validators.scan_validator import (
     validate_run_scan,
     validate_scan_result,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def run_scan(
@@ -46,7 +50,7 @@ def run_scan(
 
     asset = get_asset_by_id(db, asset_id)
 
-    print(">>> RUN_SCAN INICIADO")
+    logger.info(">>> RUN_SCAN INICIADO")
 
     if asset is None:
         raise ValueError("Activo no encontrado")
@@ -64,8 +68,8 @@ def run_scan(
 
     validate_scan_result(result)
 
-    print(">>> NMAP FINALIZADO")
-    print(result)
+    logger.info(">>> NMAP FINALIZADO")
+    logger.debug(result)
 
     update_scan_command_xml_file(
         db=db,
@@ -82,7 +86,7 @@ def run_scan(
 
         return scan
 
-    print(f">>> HOSTS PARSEADOS: {len(hosts)}")
+    logger.info(f">>> HOSTS PARSEADOS: {len(hosts)}")
 
     created_ports, total_ports = create_scan_ports(
         db=db,
@@ -97,11 +101,11 @@ def run_scan(
         created_ports=created_ports,
     )
 
-    print("REALIZANDO COMMIT...")
+    logger.info("REALIZANDO COMMIT...")
 
     db.commit()
 
-    print("COMMIT OK")
+    logger.info("COMMIT OK")
 
     mark_scan_completed(
         db=db,
