@@ -1,11 +1,15 @@
-from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 
 from app.modules.assets.service import get_asset_by_id
-from app.modules.scans.model import Scan
 from app.modules.scans.port_model import ScanPort
+from app.modules.scans.repositories.scan_repository import (
+    create_scan,
+    mark_scan_completed,
+    mark_scan_failed,
+    update_scan_command_xml_file,
+)
 from app.modules.vulnerabilities.model import Vulnerability
 from app.services.fingerprint.service import save_fingerprint
 from app.parsers.nmap_parser import NmapParser
@@ -25,18 +29,11 @@ def run_scan(
     if asset is None:
         raise ValueError("Activo no encontrado")
 
-    scan = Scan(
-        asset_id=asset.id,
-        scanner="nmap",
-        target=asset.ip_address,
+    scan = create_scan(
+        db=db,
+        asset=asset,
         profile=profile,
-        status="running",
-        started_at=datetime.utcnow(),
     )
-
-    db.add(scan)
-    db.commit()
-    db.refresh(scan)
 
     scanner = NmapScanner()
 
@@ -48,17 +45,18 @@ def run_scan(
     print(">>> NMAP FINALIZADO")
     print(result)
 
-    scan.command = result["command"]
-    scan.xml_file = result["xml_file"]
-
-    db.commit()
+    update_scan_command_xml_file(
+        db=db,
+        scan=scan,
+        command=result["command"],
+        xml_file=result["xml_file"],
+    )
 
     if not result["success"]:
-        scan.status = "failed"
-        scan.finished_at = datetime.utcnow()
-
-        db.commit()
-        db.refresh(scan)
+        mark_scan_failed(
+            db=db,
+            scan=scan,
+        )
 
         return scan
 
@@ -143,16 +141,10 @@ def run_scan(
 
     print("COMMIT OK")
 
-    scan.status = "completed"
-    scan.finished_at = datetime.utcnow()
-
-    scan.duration = int(
-        (scan.finished_at - scan.started_at).total_seconds()
+    mark_scan_completed(
+        db=db,
+        scan=scan,
     )
-
-    db.commit()
-
-    db.refresh(scan)
 
     return {
         "scan": scan,
