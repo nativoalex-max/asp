@@ -2,6 +2,11 @@ from sqlalchemy.orm import Session
 
 from app.modules.discovery.services.asset_service import get_or_create_asset
 from app.modules.discovery.services.discovery_scan_service import execute_discovery_scan
+from app.modules.discovery.validators.discovery_validator import (
+    validate_before_scan,
+    validate_discovered_host,
+    validate_run_discovery,
+)
 from app.modules.discovery.job_service import (
     create_job,
     finish_job,
@@ -17,6 +22,8 @@ def run_discovery_service(
     target: str,
     profile: str = "quick",
 ):
+    validate_run_discovery(db, client_id, target, profile)
+
     job = create_job(
         db=db,
         target=target,
@@ -46,6 +53,8 @@ def run_discovery_service(
 
         for index, host in enumerate(hosts, start=1):
 
+            validate_discovered_host(host)
+
             ip = host["ip"]
 
             print(f"Procesando host {index}/{total_hosts}: {ip}")
@@ -66,6 +75,8 @@ def run_discovery_service(
                 created=created,
                 existing=existing,
             )
+
+            validate_before_scan(db, asset.id, profile)
 
             scan = run_scan(
                 db=db,
