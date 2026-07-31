@@ -10,10 +10,9 @@ from app.modules.scans.repositories.scan_repository import (
     mark_scan_failed,
     update_scan_command_xml_file,
 )
+from app.modules.scans.services.scan_execution_service import execute_scan
 from app.modules.vulnerabilities.model import Vulnerability
 from app.services.fingerprint.service import save_fingerprint
-from app.parsers.nmap_parser import NmapParser
-from app.scanners.nmap import NmapScanner
 from app.services.correlation.engine import CorrelationEngine
 
 
@@ -35,9 +34,7 @@ def run_scan(
         profile=profile,
     )
 
-    scanner = NmapScanner()
-
-    result = scanner.scan(
+    result, hosts = execute_scan(
         target=asset.ip_address,
         profile=profile,
     )
@@ -59,8 +56,6 @@ def run_scan(
         )
 
         return scan
-
-    hosts = NmapParser.parse(result["xml_file"])
 
     print(f">>> HOSTS PARSEADOS: {len(hosts)}")
 
