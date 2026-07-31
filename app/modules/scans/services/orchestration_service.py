@@ -11,9 +11,7 @@ from app.modules.scans.repositories.scan_repository import (
     update_scan_command_xml_file,
 )
 from app.modules.scans.services.scan_execution_service import execute_scan
-from app.modules.vulnerabilities.model import Vulnerability
-from app.services.fingerprint.service import save_fingerprint
-from app.services.correlation.engine import CorrelationEngine
+from app.modules.scans.services.vulnerability_service import process_vulnerabilities
 
 
 def run_scan(
@@ -65,50 +63,10 @@ def run_scan(
         hosts=hosts,
     )
 
-    print("=" * 60)
-
-    for port in created_ports:
-        save_fingerprint(
-            db=db,
-            scan_port=port,
-        )
-
-    db.flush()
-
-    for p in created_ports[:3]:
-        print(
-            "PORT:",
-            p.port,
-            "ID:",
-            p.id,
-            "CPE:",
-            p.cpe,
-        )
-
-    print("=" * 60)
-
-    findings = CorrelationEngine.correlate(created_ports)
-
-    print(f"CREATED PORTS: {len(created_ports)}")
-    print(f"FINDINGS: {len(findings)}")
-
-    if findings:
-        print("PRIMER SCAN_PORT_ID:", findings[0]["scan_port"].id)
-        print("PRIMER CVE:", findings[0]["cve"])
-
-    for finding in findings:
-
-        db.add(
-            Vulnerability(
-                scan_port_id=finding["scan_port"].id,
-                cve=finding["cve"],
-                severity=finding["severity"],
-                cvss=finding["cvss"],
-                description=finding["description"],
-                reference=finding["reference"],
-                source="NVD",
-            )
-        )
+    total_vulnerabilities = process_vulnerabilities(
+        db=db,
+        created_ports=created_ports,
+    )
 
     print("REALIZANDO COMMIT...")
 
@@ -124,5 +82,5 @@ def run_scan(
     return {
         "scan": scan,
         "ports": total_ports,
-        "vulnerabilities": len(findings),
+        "vulnerabilities": total_vulnerabilities,
     }
