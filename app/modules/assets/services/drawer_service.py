@@ -1,5 +1,6 @@
 """Servicio dedicado a preparar la información mostrada por el Asset Drawer."""
 
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy.orm import Session, selectinload
@@ -9,8 +10,16 @@ from app.modules.scans.model import Scan
 from app.modules.scans.port_model import ScanPort
 
 
-def get_asset_drawer(db: Session, asset_id: UUID):
-    """Construir el payload de datos usado por el Asset Drawer."""
+def get_asset_drawer(db: Session, asset_id: UUID) -> dict[str, Any] | None:
+    """Construir el payload de datos usado por el Asset Drawer.
+
+    Args:
+        db: Sesion activa de SQLAlchemy.
+        asset_id: Identificador del asset consultado.
+
+    Returns:
+        Diccionario con el payload del drawer o ``None`` si el asset no existe.
+    """
     asset = (
         db.query(Asset)
         .options(
@@ -94,7 +103,11 @@ def get_asset_drawer(db: Session, asset_id: UUID):
 
                 vulnerabilities.append(
                     {
-                        "id": str(getattr(vuln, "id", None)) if getattr(vuln, "id", None) is not None else None,
+                        "id": (
+                            str(getattr(vuln, "id", None))
+                            if getattr(vuln, "id", None) is not None
+                            else None
+                        ),
                         "cve": vuln.cve,
                         "severity": vuln.severity,
                         "cvss": float(vuln.cvss) if getattr(vuln, "cvss", None) else None,
@@ -150,8 +163,16 @@ def get_asset_drawer(db: Session, asset_id: UUID):
         "last_scan": {
             "id": str(last_scan.id) if last_scan else None,
             "status": last_scan.status if last_scan else None,
-            "started_at": last_scan.started_at.isoformat() if last_scan and getattr(last_scan, "started_at", None) else None,
-            "finished_at": last_scan.finished_at.isoformat() if last_scan and getattr(last_scan, "finished_at", None) else None,
+            "started_at": (
+                last_scan.started_at.isoformat()
+                if last_scan and getattr(last_scan, "started_at", None)
+                else None
+            ),
+            "finished_at": (
+                last_scan.finished_at.isoformat()
+                if last_scan and getattr(last_scan, "finished_at", None)
+                else None
+            ),
             "duration": last_scan.duration if last_scan else None,
             "target": last_scan.target if last_scan else None,
         },

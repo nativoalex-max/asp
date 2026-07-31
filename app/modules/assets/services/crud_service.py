@@ -11,7 +11,16 @@ from app.modules.assets.validators.asset_validator import (
 )
 
 
-def create_asset(db: Session, asset: AssetCreate):
+def create_asset(db: Session, asset: AssetCreate) -> Asset:
+    """Crear un asset y persistirlo en base de datos.
+
+    Args:
+        db: Sesion activa de SQLAlchemy.
+        asset: Datos de entrada para crear el asset.
+
+    Returns:
+        Instancia del asset creada y refrescada desde base de datos.
+    """
     validate_create_asset(db, asset)
 
     db_asset = Asset(
@@ -41,7 +50,17 @@ def create_asset(db: Session, asset: AssetCreate):
     return db_asset
 
 
-def update_asset(db: Session, db_asset: Asset, asset: AssetUpdate):
+def update_asset(db: Session, db_asset: Asset, asset: AssetUpdate) -> Asset:
+    """Actualizar un asset existente con campos parciales.
+
+    Args:
+        db: Sesion activa de SQLAlchemy.
+        db_asset: Instancia persistida del asset a actualizar.
+        asset: Datos de actualizacion parcial.
+
+    Returns:
+        Instancia del asset actualizada y refrescada.
+    """
     validate_update_asset(db, db_asset, asset)
 
     data = asset.model_dump(exclude_unset=True)
@@ -55,7 +74,13 @@ def update_asset(db: Session, db_asset: Asset, asset: AssetUpdate):
     return db_asset
 
 
-def delete_asset(db: Session, db_asset: Asset):
+def delete_asset(db: Session, db_asset: Asset) -> None:
+    """Eliminar un asset existente.
+
+    Args:
+        db: Sesion activa de SQLAlchemy.
+        db_asset: Instancia persistida del asset a eliminar.
+    """
     validate_delete_asset(db, db_asset)
 
     db.delete(db_asset)
