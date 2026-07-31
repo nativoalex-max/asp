@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from app.modules.assets.service import get_asset_by_id
-from app.modules.scans.port_model import ScanPort
+from app.modules.scans.repositories.scan_port_repository import create_scan_ports
 from app.modules.scans.repositories.scan_repository import (
     create_scan,
     mark_scan_completed,
@@ -59,31 +59,11 @@ def run_scan(
 
     print(f">>> HOSTS PARSEADOS: {len(hosts)}")
 
-    total_ports = 0
-    created_ports = []
-
-    for host in hosts:
-
-        for port in host["ports"]:
-
-            db_port = ScanPort(
-                scan_id=scan.id,
-                port=port["port"],
-                protocol=port["protocol"],
-                state=port["state"],
-                service=port.get("service"),
-                product=port.get("product"),
-                version=port.get("version"),
-                extra_info=port.get("extra_info"),
-                cpe=port.get("cpe"),
-            )
-
-            db.add(db_port)
-            created_ports.append(db_port)
-
-            total_ports += 1
-
-    db.flush()
+    created_ports, total_ports = create_scan_ports(
+        db=db,
+        scan=scan,
+        hosts=hosts,
+    )
 
     print("=" * 60)
 
