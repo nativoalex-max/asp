@@ -1,3 +1,5 @@
+"""Schemas de entrada y salida para el modulo Scans."""
+
 from datetime import datetime
 from uuid import UUID
 
@@ -5,11 +7,15 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ScanRunRequest(BaseModel):
+    """Payload para ejecutar un scan."""
+
     asset_id: UUID
     profile: str = "quick"
 
 
 class ScanResponse(BaseModel):
+    """Respuesta basica de un scan."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
@@ -24,6 +30,8 @@ class ScanResponse(BaseModel):
 
 
 class ScanPortResponse(BaseModel):
+    """Respuesta de puerto descubierto en un scan."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
@@ -37,4 +45,6 @@ class ScanPortResponse(BaseModel):
 
 
 class ScanDetailResponse(ScanResponse):
+    """Respuesta detallada de scan con puertos."""
+
     ports: list[ScanPortResponse] = []

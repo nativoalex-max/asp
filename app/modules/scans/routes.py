@@ -1,4 +1,7 @@
+"""Rutas HTTP para operaciones del modulo Scans."""
+
 from uuid import UUID
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -32,7 +35,16 @@ router = APIRouter(
 def scans(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
-):
+) -> list[ScanResponse]:
+    """Listar scans disponibles.
+
+    Args:
+        db: Sesion activa de SQLAlchemy.
+        current_user: Usuario autenticado.
+
+    Returns:
+        Lista de scans serializados.
+    """
     return list_scans(db)
 
 
@@ -44,7 +56,17 @@ def scan(
     scan_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
-):
+) -> ScanResponse:
+    """Obtener un scan por identificador.
+
+    Args:
+        scan_id: Identificador unico del scan.
+        db: Sesion activa de SQLAlchemy.
+        current_user: Usuario autenticado.
+
+    Returns:
+        Scan serializado.
+    """
     db_scan = get_scan(db, scan_id)
 
     if not db_scan:
@@ -64,7 +86,17 @@ def execute_scan(
     request: ScanRunRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
-):
+) -> Any:
+    """Ejecutar un scan para un asset.
+
+    Args:
+        request: Payload con asset y perfil.
+        db: Sesion activa de SQLAlchemy.
+        current_user: Usuario autenticado.
+
+    Returns:
+        Resultado devuelto por el servicio de scans.
+    """
     try:
         return run_scan(
             db=db,
@@ -87,7 +119,14 @@ def remove_scan(
     scan_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
-):
+) -> None:
+    """Eliminar un scan existente.
+
+    Args:
+        scan_id: Identificador unico del scan.
+        db: Sesion activa de SQLAlchemy.
+        current_user: Usuario autenticado.
+    """
     db_scan = get_scan(db, scan_id)
 
     if not db_scan:
