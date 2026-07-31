@@ -7,11 +7,17 @@ from sqlalchemy.orm import Session
 from app.modules.assets.model import Asset
 
 
-def get_assets(db: Session) -> list[Asset]:
+def get_assets(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100,
+) -> list[Asset]:
     """Obtener todos los assets ordenados por nombre.
 
     Args:
         db: Sesion activa de SQLAlchemy.
+        skip: Cantidad de registros a omitir.
+        limit: Cantidad maxima de registros a retornar.
 
     Returns:
         Lista de assets ordenada por nombre.
