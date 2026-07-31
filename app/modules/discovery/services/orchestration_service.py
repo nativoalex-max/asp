@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.modules.discovery.services.asset_service import get_or_create_asset
+from app.modules.discovery.services.discovery_scan_service import execute_discovery_scan
 from app.modules.discovery.job_service import (
     create_job,
     finish_job,
@@ -8,8 +9,6 @@ from app.modules.discovery.job_service import (
     update_progress,
 )
 from app.modules.scans.service import run_scan
-from app.parsers.nmap_parser import NmapParser
-from app.scanners.nmap import NmapScanner
 
 
 def run_discovery_service(
@@ -26,17 +25,10 @@ def run_discovery_service(
 
     try:
 
-        scanner = NmapScanner()
-
-        result = scanner.scan(
+        hosts = execute_discovery_scan(
             target=target,
             profile=profile,
         )
-
-        if not result["success"]:
-            raise Exception(result["stderr"])
-
-        hosts = NmapParser.parse(result["xml_file"])
 
         print("=" * 60)
         print(f"DISCOVERY: Hosts encontrados: {len(hosts)}")
