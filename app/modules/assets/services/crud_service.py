@@ -4,9 +4,16 @@ from sqlalchemy.orm import Session
 
 from app.modules.assets.model import Asset
 from app.modules.assets.schema import AssetCreate, AssetUpdate
+from app.modules.assets.validators.asset_validator import (
+    validate_create_asset,
+    validate_delete_asset,
+    validate_update_asset,
+)
 
 
 def create_asset(db: Session, asset: AssetCreate):
+    validate_create_asset(db, asset)
+
     db_asset = Asset(
         client_id=asset.client_id,
         name=asset.name,
@@ -35,6 +42,8 @@ def create_asset(db: Session, asset: AssetCreate):
 
 
 def update_asset(db: Session, db_asset: Asset, asset: AssetUpdate):
+    validate_update_asset(db, db_asset, asset)
+
     data = asset.model_dump(exclude_unset=True)
 
     for key, value in data.items():
@@ -47,5 +56,7 @@ def update_asset(db: Session, db_asset: Asset, asset: AssetUpdate):
 
 
 def delete_asset(db: Session, db_asset: Asset):
+    validate_delete_asset(db, db_asset)
+
     db.delete(db_asset)
     db.commit()
